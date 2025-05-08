@@ -23,14 +23,25 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    # Setup PNPM
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 8
+
+    # Setup Node.js with PNPM caching
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
+        cache: 'pnpm'
       env:
         DATABASE_TYPE: ${{ matrix.db-type }}
-    - run: npm install --global yarn
-    - run: yarn install
-    - run: yarn test
-    - run: yarn build
+
+    # Install dependencies
+    - name: Install dependencies
+      run: pnpm install
+
+    # Run tests and build
+    - run: pnpm test
+    - run: pnpm build
